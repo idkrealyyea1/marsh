@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-t="salon_title">مركز التجميل — Marshmallow</title>
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ---- Salon Service Cards ---- */
+    .salon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+    .salon-card{background:var(--white);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);overflow:hidden;transition:all var(--transition)}
+    .salon-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover)}
+    .salon-card-img{height:180px;background:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:3rem;border-bottom:2px solid rgba(184,144,126,0.1)}
+    .salon-card-body{padding:20px}
+    .salon-card-body h3{font-size:1.05rem;margin-bottom:6px}
+    .salon-card-body p{font-size:0.85rem;color:var(--charcoal);opacity:0.7;line-height:1.7;margin-bottom:8px}
+    .salon-card-price{font-family:var(--font-english-body);font-weight:700;color:var(--rose-mauve-dark);font-size:1rem;margin-bottom:12px}
+    .salon-card-actions{display:flex;gap:8px}
+
+    /* ---- Interior Photos Section — Editorial Layout ---- */
+    .salon-photos-section {
+      margin-bottom: 60px;
+      margin-top: 52px;
+    }
+
+    .salon-photos-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .salon-photos-header h2 {
+      font-family: var(--font-arabic-heading);
+      font-size: 1.5rem;
+      color: var(--charcoal);
+      margin-bottom: 6px;
+    }
+
+    .salon-photos-header p {
+      font-size: 0.88rem;
+      color: var(--charcoal);
+      opacity: 0.6;
+    }
+
+    .salon-photos-header .section-line {
+      width: 50px;
+      height: 2px;
+      background: var(--gold);
+      margin: 10px auto 8px;
+    }
+
+    /* --- Editorial Grid Layout --- */
+    .salon-editorial {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Row 1: big hero (left 60%) + two stacked small (right 40%) */
+    .salon-editorial-row1 {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 10px;
+      height: 460px;
+    }
+
+    .salon-editorial-hero {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      height: 100%;
+    }
+
+    .salon-editorial-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .salon-editorial-hero:hover img {
+      transform: scale(1.04);
+    }
+
+    .salon-editorial-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+    }
+
+    .salon-editorial-stack-item {
+      flex: 1;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .salon-editorial-stack-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .salon-editorial-stack-item:hover img {
+      transform: scale(1.06);
+    }
+
+    /* Row 2: three equal photos */
+    .salon-editorial-row2 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      height: 240px;
+    }
+
+    .salon-editorial-tile {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      height: 100%;
+    }
+
+    .salon-editorial-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .salon-editorial-tile:hover img {
+      transform: scale(1.06);
+    }
+
+    /* Row 3: wider strip — remaining 4 photos */
+    .salon-editorial-row3 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      height: 180px;
+    }
+
+    .salon-editorial-row3 .salon-editorial-tile {
+      border-radius: var(--radius-md);
+    }
+
+    /* Hover overlay on all items */
+    .salon-photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(143,107,92,0.35) 0%, rgba(58,48,43,0.15) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .salon-editorial-hero:hover .salon-photo-overlay,
+    .salon-editorial-stack-item:hover .salon-photo-overlay,
+    .salon-editorial-tile:hover .salon-photo-overlay {
+      opacity: 1;
+    }
+
+    .salon-photo-overlay-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(58,48,43,0.2);
+      transform: scale(0.8);
+      transition: transform 0.3s ease;
+    }
+
+    .salon-editorial-hero:hover .salon-photo-overlay-icon,
+    .salon-editorial-stack-item:hover .salon-photo-overlay-icon,
+    .salon-editorial-tile:hover .salon-photo-overlay-icon {
+      transform: scale(1);
+    }
+
+    .salon-photo-overlay-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--rose-mauve-dark);
+    }
+
+    /* Gold badge on hero */
+    .salon-editorial-badge {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: rgba(201,162,93,0.92);
+      backdrop-filter: blur(4px);
+      color: var(--white);
+      font-family: var(--font-arabic-body);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 50px;
+      letter-spacing: 0.3px;
+      pointer-events: none;
+    }
+
+    /* Decorative separator between rows */
+    .salon-editorial-sep {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 4px 0;
+    }
+
+    .salon-editorial-sep::before,
+    .salon-editorial-sep::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to left, transparent, rgba(201,162,93,0.35), transparent);
+    }
+
+    .salon-editorial-sep-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.6;
+    }
+
+    /* CTA */
+    .salon-photos-cta {
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    /* Lightbox for interior photos */
+    .interior-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      background: rgba(0,0,0,0.96);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .interior-lightbox.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .interior-lightbox .ilb-close {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+
+    .interior-lightbox .ilb-close:hover { background: rgba(255,255,255,0.3); }
+
+    .interior-lightbox .ilb-prev,
+    .interior-lightbox .ilb-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+
+    .interior-lightbox .ilb-prev { left: 16px; }
+    .interior-lightbox .ilb-next { right: 16px; }
+    .interior-lightbox .ilb-prev:hover,
+    .interior-lightbox .ilb-next:hover { background: rgba(255,255,255,0.28); }
+
+    .interior-lightbox .ilb-counter {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.65);
+      font-family: var(--font-english-body);
+      font-size: 0.85rem;
+      z-index: 10;
+    }
+
+    .interior-lightbox .ilb-img-wrap {
+      width: 90vw;
+      height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .interior-lightbox .ilb-img-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .salon-editorial-row1 {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .salon-editorial-hero {
+        height: 280px;
+      }
+      .salon-editorial-stack {
+        flex-direction: row;
+        height: 160px;
+      }
+      .salon-editorial-row2 {
+        height: 180px;
+      }
+      .salon-editorial-row3 {
+        grid-template-columns: repeat(2, 1fr);
+        height: auto;
+      }
+      .salon-editorial-row3 .salon-editorial-tile {
+        height: 140px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .salon-editorial-row2 {
+        grid-template-columns: repeat(2, 1fr);
+        height: auto;
+      }
+      .salon-editorial-row2 .salon-editorial-tile {
+        height: 130px;
+      }
+      .salon-editorial-stack {
+        height: 120px;
+      }
+      .salon-editorial-hero {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-screen" id="splash">
+    <div class="splash-logo-m" id="splashLogo"></div>
+    <div class="splash-brand">MARSHMALLOW</div>
+    <div class="splash-sub">PHOTO CHALET & EVENTS</div>
+    <div class="splash-line"></div>
+    <div class="splash-dots">
+      <div class="splash-dot"></div>
+      <div class="splash-dot"></div>
+      <div class="splash-dot"></div>
+    </div>
+  </div>
+  <header class="site-header"></header>
+
+  <main class="page-container">
+    <div class="section-header">
+      <h1 data-t="salon_title">مركز التجميل والكوافير</h1>
+      <div class="section-line"></div>
+      <p data-t="salon_subtitle">خدمات تجميل وعناية متكاملة بأيدي أمهر الخبيرات</p>
+    </div>
+
+    <!-- ===== Services Grid — FIRST ===== -->
+    <div class="section-header" style="margin-top:0;">
+      <h2 style="font-size:1.4rem;" data-t="salon_services_title">خدماتنا</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="salon-grid" id="salonGrid">
+      <div class="loading-overlay" style="grid-column:1/-1;">
+        <div class="spinner"></div>
+        <div class="loading-text" data-t="cal_loading">جاري تحميل...</div>
+      </div>
+    </div>
+
+    <!-- ===== Interior Photos Section — Editorial Layout ===== -->
+    <div class="salon-photos-section">
+      <div class="salon-photos-header">
+        <h2>من داخل مشغلنا</h2>
+        <div class="section-line"></div>
+        <p>أجواء أنيقة وتجهيزات متطورة لتجربة تجميل لا تُنسى</p>
+      </div>
+
+      <div class="salon-editorial">
+
+        <!-- Row 1: Large hero + two stacked -->
+        <div class="salon-editorial-row1">
+          <div class="salon-editorial-hero" onclick="openInteriorLightbox(0)">
+            <img src="images/gallery/salon/5.jpg" alt="ركن الاستراحة في مشغلنا" loading="lazy">
+            <div class="salon-photo-overlay">
+              <div class="salon-photo-overlay-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              </div>
+            </div>
+            <div class="salon-editorial-badge">ركن الاستراحة</div>
+          </div>
+
+          <div class="salon-editorial-stack">
+            <div class="salon-editorial-stack-item" onclick="openInteriorLightbox(1)">
+              <img src="images/gallery/salon/2.jpg" alt="منطقة الاستقبال" loading="lazy">
+              <div class="salon-photo-overlay">
+                <div class="salon-photo-overlay-icon">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                </div>
+              </div>
+            </div>
+            <div class="salon-editorial-stack-item" onclick="openInteriorLightbox(2)">
+              <img src="images/gallery/salon/1.jpg" alt="كرسي التصفيف" loading="lazy">
+              <div class="salon-photo-overlay">
+                <div class="salon-photo-overlay-icon">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decorative separator -->
+        <div class="salon-editorial-sep">
+          <div class="salon-editorial-sep-dot"></div>
+          <div class="salon-editorial-sep-dot"></div>
+          <div class="salon-editorial-sep-dot"></div>
+        </div>
+
+        <!-- Row 2: Three equal tiles -->
+        <div class="salon-editorial-row2">
+          <div class="salon-editorial-tile" onclick="openInteriorLightbox(3)">
+            <img src="images/gallery/salon/4.jpg" alt="كرسي المشغل" loading="lazy">
+            <div class="salon-photo-overlay">
+              <div class="salon-photo-overlay-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="salon-editorial-tile" onclick="openInteriorLightbox(4)">
+            <img src="images/gallery/salon/3.jpg" alt="طاولة الأظافر" loading="lazy">
+            <div class="salon-photo-overlay">
+              <div class="salon-photo-overlay-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="salon-editorial-tile" onclick="openInteriorLightbox(5)">
+            <img src="images/gallery/salon/6.jpg" alt="من داخل المشغل" loading="lazy">
+            <div class="salon-photo-overlay">
+              <div class="salon-photo-overlay-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decorative separator -->
+        <div class="salon-editorial-sep">
+          <div class="salon-editorial-sep-dot"></div>
+          <div class="salon-editorial-sep-dot"></div>
+          <div class="salon-editorial-sep-dot"></div>
+        </div>
+
+        <!-- Row 3: Four narrow strip photos -->
+        <div class="salon-editorial-row3">
+          <div class="salon-editorial-tile" onclick="openInteriorLightbox(6)">
+            <img src="images/gallery/salon/7.jpg" alt="أجواء المشغل" loading="lazy">
+            <div class="salon-photo-overlay">
+              <div class="salon-photo-overlay-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="salon-editorial-tile" onclick="openInteriorLightbox(7)">
+            <img src="images/gallery/salon/8.jpg" alt="تفاصيل الديكور" loading="lazy">
+            <div class="salon-photo-overlay">
+              <div class="salon-photo-overlay-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="salon-editorial-tile" onclick="openInteriorLightbox(8)">
+            <img src="images/gallery/salon/9.jpg" alt="لمحة من مشغلنا" loading="lazy">
+            <div class="salon-photo-overlay">
+              <div class="salon-photo-overlay-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="salon-editorial-tile" onclick="openInteriorLightbox(0)">
+            <img src="images/gallery/salon/5.jpg" alt="ركن الاستراحة" loading="lazy">
+            <div class="salon-photo-overlay">
+              <div class="salon-photo-overlay-icon" style="position:relative;">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;fill:var(--rose-mauve-dark)"><path d="M19 13H5v-2h14v2z"/><path d="M13 5v14h-2V5h2z"/></svg>
+              </div>
+              <!-- "View all" overlay on last tile -->
+              <span style="position:absolute;bottom:12px;right:0;left:0;text-align:center;color:white;font-family:var(--font-arabic-body);font-size:0.78rem;font-weight:600;letter-spacing:0.3px;text-shadow:0 1px 4px rgba(0,0,0,0.4);">عرض الكل</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end .salon-editorial -->
+    </div>
+    <!-- ===== End Interior Photos Section ===== -->
+
+    <!-- Interior Photos Lightbox -->
+    <div class="interior-lightbox" id="interiorLightbox">
+      <div class="ilb-close" onclick="closeInteriorLightbox()">&times;</div>
+      <div class="ilb-prev" onclick="navigateInterior(-1)">&#8594;</div>
+      <div class="ilb-next" onclick="navigateInterior(1)">&#8592;</div>
+      <div class="ilb-counter" id="ilbCounter"></div>
+      <div class="ilb-img-wrap">
+        <img id="ilbImg" src="" alt="">
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery-section" style="margin-top:48px;">
+      <h2 class="gallery-section-title" data-t="gallery_salon">معرض خدمات التجميل</h2>
+      <div id="salonGallery"></div>
+    </div>
+  </main>
+
+  <a class="whatsapp-float" href="https://wa.me/966XXXXXXXXX" target="_blank" data-t-aria="home_contact_title">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <footer class="site-footer"></footer>
+
+  <script src="js/translations.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/salonServices.js"></script>
+  <script src="js/galleryData.js"></script>
+  <script src="js/gallery.js"></script>
+  <script>
+    initPage("salon");
+
+    /* ---- Interior Photos Lightbox ---- */
+    const INTERIOR_PHOTOS = [
+      { src: "images/gallery/salon/5.jpg", alt: "ركن الاستراحة" },
+      { src: "images/gallery/salon/2.jpg", alt: "منطقة الاستقبال" },
+      { src: "images/gallery/salon/1.jpg", alt: "كرسي التصفيف" },
+      { src: "images/gallery/salon/4.jpg", alt: "كرسي المشغل" },
+      { src: "images/gallery/salon/3.jpg", alt: "طاولة الأظافر" },
+      { src: "images/gallery/salon/6.jpg", alt: "من داخل المشغل" },
+      { src: "images/gallery/salon/7.jpg", alt: "أجواء المشغل" },
+      { src: "images/gallery/salon/8.jpg", alt: "تفاصيل الديكور" },
+      { src: "images/gallery/salon/9.jpg", alt: "لمحة من مشغلنا" }
+    ];
+
+    let ilbCurrent = 0;
+
+    function openInteriorLightbox(index) {
+      ilbCurrent = index;
+      updateInteriorLightbox();
+      document.getElementById("interiorLightbox").classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeInteriorLightbox() {
+      document.getElementById("interiorLightbox").classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    function navigateInterior(dir) {
+      ilbCurrent = (ilbCurrent + dir + INTERIOR_PHOTOS.length) % INTERIOR_PHOTOS.length;
+      updateInteriorLightbox();
+    }
+
+    function updateInteriorLightbox() {
+      const photo = INTERIOR_PHOTOS[ilbCurrent];
+      document.getElementById("ilbImg").src = photo.src;
+      document.getElementById("ilbImg").alt = photo.alt;
+      document.getElementById("ilbCounter").textContent = (ilbCurrent + 1) + " / " + INTERIOR_PHOTOS.length;
+    }
+
+    /* Close on background click */
+    document.getElementById("interiorLightbox").addEventListener("click", function(e) {
+      if (e.target === this || e.target.classList.contains("ilb-img-wrap")) {
+        closeInteriorLightbox();
+      }
+    });
+
+    /* Keyboard navigation */
+    document.addEventListener("keydown", function(e) {
+      const lb = document.getElementById("interiorLightbox");
+      if (!lb.classList.contains("active")) return;
+      if (e.key === "Escape") closeInteriorLightbox();
+      else if (e.key === "ArrowRight") navigateInterior(Lang.isAr() ? 1 : -1);
+      else if (e.key === "ArrowLeft") navigateInterior(Lang.isAr() ? -1 : 1);
+    });
+
+    /* Touch swipe support */
+    (function() {
+      let startX = 0;
+      const lb = document.getElementById("interiorLightbox");
+      lb.addEventListener("touchstart", function(e) {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+      lb.addEventListener("touchend", function(e) {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 50) navigateInterior(dx > 0 ? (Lang.isAr() ? -1 : 1) : (Lang.isAr() ? 1 : -1));
+      }, { passive: true });
+    })();
+
+    /* ---- Salon Services ---- */
+    function renderSalonServices() {
+      const grid = document.getElementById("salonGrid");
+      let html = "";
+      SALON_SERVICES.forEach(service => {
+        const name = Lang.isAr() ? service.name : (service.name_en || service.name);
+        const desc = Lang.isAr() ? service.description : (service.description_en || service.description);
+        const waText = Lang.isAr() ? `مرحبًا، أريد حجز خدمة: ${service.name}` : `Hello, I want to book: ${service.name_en || service.name}`;
+        html += `<div class="salon-card">
+          <div class="salon-card-img">${service.icon}</div>
+          <div class="salon-card-body">
+            <h3>${name}</h3>
+            <p>${desc}</p>
+            ${service.price ? `<div class="salon-card-price">${service.price}</div>` : ''}
+            <div class="salon-card-actions">
+              <a href="${getWhatsAppLink(waText)}" target="_blank" class="btn btn-primary btn-sm">
+                <span data-t="salon_book_wa">احجزي عبر واتساب</span>
+              </a>
+            </div>
+          </div>
+        </div>`;
+      });
+      grid.innerHTML = html;
+    }
+
+    renderSalonServices();
+    createGallery({ containerId: "salonGallery", category: "salon", columns: 3 });
+  </script>
+</body>
+</html>
